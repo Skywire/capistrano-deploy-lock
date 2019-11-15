@@ -20,15 +20,19 @@ namespace :lock do
   desc 'create lock'
   task :create do
     on roles(:db) do
-      deploy_user = `git config user.name`.strip
-      execute "echo '#{deploy_user}' > #{lock_path}"
+      if test("[ -d #{shared_path} ]")
+          deploy_user = `git config user.name`.strip
+          execute "echo '#{deploy_user}' > #{lock_path}"
+      end
     end
   end
 
   desc 'release lock'
   task :release do
     on roles(:db) do
-      execute "rm #{lock_path}"
+      if test("[ -f #{lock_path} ]")
+        execute "rm #{lock_path}"
+      end
     end
   end
 
