@@ -32,6 +32,11 @@ namespace :lock do
     on roles(:db) do
       if test("[ -f #{lock_path} ]")
         execute "rm #{lock_path}"
+      else
+        raise StandardError.new <<~MSG
+          \n\n\e[31mLock not released for some reason
+          Deploy has not failed, but lock still in place\e[0m\n
+        MSG
       end
     end
   end
